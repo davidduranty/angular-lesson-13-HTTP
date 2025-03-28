@@ -14,10 +14,11 @@ import { PlacesService } from '../places.service';
 })
 export class UserPlacesComponent implements OnInit {
   private placesService = inject(PlacesService)
-  places = signal<Place[] | undefined>(undefined);
+  // places = signal<Place[] | undefined>(undefined);
   private destroyRef = inject(DestroyRef)
   isFetching = signal(false);
   error = signal('');
+  places = this.placesService.loadedUserPlaces
 
 
 
@@ -25,14 +26,11 @@ export class UserPlacesComponent implements OnInit {
     const subscription =
       this.placesService.loadUserPlaces().subscribe(
         {
-          next: (places) => {
-            this.places.set(places)
+          error: (error: Error) => {
+            this.error.set(error.message)
           },
           complete: () => {
             this.isFetching.set(false);
-          },
-          error: (error: Error) => {
-            this.error.set(error.message)
           }
         }
       )
@@ -41,7 +39,12 @@ export class UserPlacesComponent implements OnInit {
     })
   }
 
-  deletePlace(selectedPlace: Place) {
-    this.placesService.removeUserPlace(selectedPlace).subscribe()
+  onRemovePlace(place: Place) {
+    const subscription = this.placesService.removeUserPlace(place).subscribe()
+
+    this.destroyRef.onDestroy(() => {
+      subscription.unsubscribe();
+    })
   }
+
 }

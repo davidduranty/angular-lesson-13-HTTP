@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, input, output } from '@angular/core';
 
 import { Place } from './place.model';
 
@@ -13,8 +13,9 @@ export class PlacesComponent {
   places = input.required<Place[]>();
   selectPlace = output<Place>();
 
+
   onSelectPlace(place: Place) {
     this.selectPlace.emit(place);
-    window.location.reload();
+    // window.location.reload();
   }
 }
