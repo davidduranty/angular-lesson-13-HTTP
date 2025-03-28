@@ -27,7 +27,9 @@ export class PlacesService {
     })
   }
 
-  removeUserPlace(place: Place) { }
+  removeUserPlace(place: Place) {
+    return this.httpClient.delete<{ places: Place }>(`http://localhost:3000/user-places/${place.id}`)
+  }
 
   private fetchPlaces(url: string, errorMessage: string) {
     return this.httpClient.get<{ places: Place[] }>(url)
